@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <body>
+
+        <div ng-app="myApp" ng-controller="myCtrl"> 
+
+            <input type="text" id="jQuerySearch" placeholder="Busqueda con jQuery">
+
+            <input type="text" ng-model="filtro.nombre">
+            <table class="table" id="miTabla">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Direccion</th>
+                </tr>
+                <tbody>
+                    <tr ng-repeat="e in emisores| filter : filtro">
+                        <td>{{ e.nombre}}</td>
+                        <td>{{ e.direccion}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <p>The response object has many properties. This example demonstrate the value of the data, status, and statusText properties.</p>
+
+        <script>
+            var app = angular.module('myApp', []);
+            app.controller('myCtrl', function ($scope, $http) {
+                $http.get("http://localhost:21626/WSRest/webresources/emisor/getEmisores")
+                        .then(function (response) {
+                            $scope.emisores = response.data;
+                            $scope.statuscode = response.status;
+                            $scope.statustext = response.statusText;
+                        });
+            });
+
+
+            $(document).ready(function () {
+                // Write on keyup event of keyword input element
+                
+                $("#jQuerySearch").keyup(function () {
+                    console.log($(this).val());
+                    // When value of the input is not blank
+                    if ($(this).val() != "") {
+                        // Show only matching TR, hide rest of them
+                        $("#miTabla tbody>tr").hide();
+                        $("#miTabla td:contains('" + $(this).val().toString().toUpperCase() + "')").parent("tr").show();
+                    } else {
+                        $("#miTabla tbody>tr").show();
+                    }                    
+                });
+            });
+            
+        </script>
+
+
+    </body>
+
+</html>
